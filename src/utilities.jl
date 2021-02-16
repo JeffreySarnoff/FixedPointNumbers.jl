@@ -105,8 +105,8 @@ function normed_math_saturates()
   	@eval $F(x::Normed) = $S(x)
   end
   for (F,S) in ((:(+), :saturating_add), (:(-), :saturating_sub),
-  	            (:(*), :saturating_mul), (:(/), :saturating_fdiv),
-  	            (:(%), :saturating_rem))
+  	         (:(*), :saturating_mul), (:(/), :saturating_fdiv),
+  	         (:(%), :saturating_rem))
     @eval $F(x::Normed, y::Normed) = $S(x, y)
   end
   for (F,S) in ((:cld, :saturating_cld), (:fld, :saturating_fld),
