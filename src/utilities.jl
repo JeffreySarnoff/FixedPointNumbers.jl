@@ -54,3 +54,66 @@ if !signbit(signed(unsafe_trunc(UInt, -12.345)))
 end
 
 wrapper(@nospecialize(T)) = Base.typename(T).wrapper
+
+# these select the arithmetic modality (saturating or wrapping)
+# for Normed types and for Fixed types, independently
+
+function normed_math_saturates()
+  for (F,S) in ((:abs, :saturating_abs), (:neg, :saturating_neg))
+  	@eval $F(x::Normed) = $S(x)
+  end
+  for (F,S) in ((:(+), :saturating_add), (:(-), :saturating_sub),
+  	            (:(*), :saturating_mul), (:(/), :saturating_fdiv),
+  	            (:(%), :saturating_rem))
+    @eval $F(x::Normed, y::Normed) = $S(x, y)
+  end
+  for (F,S) in ((:cld, :saturating_cld), (:fld, :saturating_fld),
+  	            (:mod, :saturating_mod), (:div, :saturating_div))
+    @eval $F(x::Normed, y::Normed) = $S(x, y)
+  end
+end
+
+function normed_math_wraps()
+  for (F,S) in ((:abs, :wrapping_abs), (:neg, :wrapping_neg))
+  	@eval $F(x::Normed) = $S(x)
+  end
+  for (F,S) in ((:(+), :wrapping_add), (:(-), :wrapping_sub),
+  	            (:(*), :wrapping_mul), (:(/), :wrapping_fdiv),
+  	            (:(%), :wrapping_rem))
+    @eval $F(x::Normed, y::Normed) = $S(x, y)
+  end
+  for (F,S) in ((:cld, :wrapping_cld), (:fld, :wrapping_fld),
+  	            (:mod, :wrapping_mod), (:div, :wrapping_div))
+    @eval $F(x::Normed, y::Normed) = $S(x, y)
+  end
+end
+
+function fixed_math_saturates()
+  for (F,S) in ((:abs, :saturating_abs), (:neg, :saturating_neg))
+  	@eval $F(x::Fixed) = $S(x)
+  end
+  for (F,S) in ((:(+), :saturating_add), (:(-), :saturating_sub),
+  	            (:(*), :saturating_mul), (:(/), :saturating_fdiv),
+  	            (:(%), :saturating_rem))
+    @eval $F(x::Fixed, y::Fixed) = $S(x, y)
+  end
+  for (F,S) in ((:cld, :saturating_cld), (:fld, :saturating_fld),
+  	            (:mod, :saturating_mod), (:div, :saturating_div))
+    @eval $F(x::Fixed, y::Fixed) = $S(x, y)
+  end
+end
+
+function fixed_math_wraps()
+  for (F,S) in ((:abs, :wrapping_abs), (:neg, :wrapping_neg))
+  	@eval $F(x::Fixed) = $S(x)
+  end
+  for (F,S) in ((:(+), :wrapping_add), (:(-), :wrapping_sub),
+  	            (:(*), :wrapping_mul), (:(/), :wrapping_fdiv),
+  	            (:(%), :wrapping_rem))
+    @eval $F(x::Fixed, y::Fixed) = $S(x, y)
+  end
+  for (F,S) in ((:cld, :wrapping_cld), (:fld, :wrapping_fld),
+  	            (:mod, :wrapping_mod), (:div, :wrapping_div))
+    @eval $F(x::Fixed, y::Fixed) = $S(x, y)
+  end
+end
