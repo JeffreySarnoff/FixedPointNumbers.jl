@@ -58,6 +58,48 @@ wrapper(@nospecialize(T)) = Base.typename(T).wrapper
 # these select the arithmetic modality (saturating or wrapping)
 # for Normed types and for Fixed types, independently
 
+"""
+    math_saturates(T) where T is `Normed` or `Fixed`
+
+Sets arithmetic with `Normed`, `Fixed` types to saturate.
+
+Rather than wrap around, results that would have
+overflowed or underflowed instead will stay as
+floatmax(T) or as floatmin(T), as appropriate.
+"""
+function math_saturates(::Type{T}) where {T<:FixedPoint}
+    if T <: Normed
+        normed_math_saturates()
+    elseif T <: Fixed
+        fixed_math_saturates()
+    else
+        normed_math_saturates()
+        fixed_math_saturates()
+    end   
+end
+
+"""
+    math_wraps(T)
+
+where T is `Normed` or `Fixed` or `FixedPoint`
+
+Sets arithmetic with `Normed`, `Fixed` types to wrap.
+
+Results may overflow or underflow, wrapping around.
+`Fixed` types change sign as they wrap.
+`Normed` types change magnitude as they wrap.
+"""
+function math_wraps(::Type{T}) where {T<:FixedPoint}
+    if T <: Normed
+        normed_math_wraps()
+    elseif T <: Fixed
+        fixed_math_wraps()
+    else
+        normed_math_wraps()
+        fixed_math_wraps()
+    end   
+end
+
 function normed_math_saturates()
   for (F,S) in ((:abs, :saturating_abs), (:neg, :saturating_neg))
   	@eval $F(x::Normed) = $S(x)
