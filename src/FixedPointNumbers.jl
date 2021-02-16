@@ -41,7 +41,8 @@ export
     wrapping_div, wrapping_fld, wrapping_cld, wrapping_rem, wrapping_mod,
     saturating_neg, saturating_abs, saturating_add, saturating_sub, saturating_mul,
     saturating_div, saturating_fld, saturating_cld, saturating_rem, saturating_mod,
-    wrapping_fdiv, saturating_fdiv, checked_fdiv
+    wrapping_fdiv, saturating_fdiv, checked_fdiv,
+    math_saturates, math_wraps,
 
 include("utilities.jl")
 
