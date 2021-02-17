@@ -59,7 +59,7 @@ wrapper(@nospecialize(T)) = Base.typename(T).wrapper
 # for Normed types and for Fixed types, independently
 
 """
-    math_saturates(T) where T is `Normed` or `Fixed`
+    saturated!(T) where T is `Normed` or `Fixed`
 
 Sets arithmetic with `Normed`, `Fixed` types to saturate.
 
@@ -67,19 +67,19 @@ Rather than wrap around, results that would have
 overflowed or underflowed instead will stay as
 floatmax(T) or as floatmin(T), as appropriate.
 """
-function math_saturates(::Type{T}) where {T<:FixedPoint}
+function saturated!(::Type{T}) where {T<:FixedPoint}
     if T <: Normed
-        normed_math_saturates()
+        saturate_normed_types!()
     elseif T <: Fixed
-        fixed_math_saturates()
+        saturate_fixed_types!()
     else
-        normed_math_saturates()
-        fixed_math_saturates()
+        saturate_normed_types!()
+        saturate_fixed_types!()
     end   
 end
 
 """
-    math_wraps(T)
+    wrapped!(T)
 
 where T is `Normed` or `Fixed` or `FixedPoint`
 
@@ -89,18 +89,18 @@ Results may overflow or underflow, wrapping around.
 `Fixed` types change sign as they wrap.
 `Normed` types change magnitude as they wrap.
 """
-function math_wraps(::Type{T}) where {T<:FixedPoint}
+function wrapped!(::Type{T}) where {T<:FixedPoint}
     if T <: Normed
-        normed_math_wraps()
+        wrap_normed_types!()
     elseif T <: Fixed
-        fixed_math_wraps()
+        wrap_fixed_types!()
     else
-        normed_math_wraps()
-        fixed_math_wraps()
+        wrap_normed_types!()
+        wrap_fixed_types!()
     end   
 end
 
-function normed_math_saturates()
+function saturate_normed_types!()
   for (F,S) in ((:abs, :saturating_abs), (:neg, :saturating_neg))
   	@eval $F(x::Normed) = $S(x)
   end
@@ -115,7 +115,7 @@ function normed_math_saturates()
   end
 end
 
-function normed_math_wraps()
+function wrap_normed_types!()
   for (F,S) in ((:abs, :wrapping_abs), (:neg, :wrapping_neg))
   	@eval $F(x::Normed) = $S(x)
   end
@@ -130,7 +130,7 @@ function normed_math_wraps()
   end
 end
 
-function fixed_math_saturates()
+function saturate_fixed_types!()
   for (F,S) in ((:abs, :saturating_abs), (:neg, :saturating_neg))
   	@eval $F(x::Fixed) = $S(x)
   end
@@ -145,7 +145,7 @@ function fixed_math_saturates()
   end
 end
 
-function fixed_math_wraps()
+function wrap_fixed_types!()
   for (F,S) in ((:abs, :wrapping_abs), (:neg, :wrapping_neg))
   	@eval $F(x::Fixed) = $S(x)
   end
